@@ -1,0 +1,54 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+<title>Sistema Profissional</title>
+</head>
+<body>
+
+<h2>Upload Nota</h2>
+<input type="file" id="file"/>
+<button onclick="enviar()">Processar</button>
+
+<h3>Resultado</h3>
+<textarea id="texto" rows="5" cols="50"></textarea><br>
+Evento: <input id="evento"><br>
+Centro: <input id="centro"><br>
+
+<button onclick="salvar()">Ensinar IA</button>
+
+<script>
+let current={};
+
+async function enviar(){
+ let f=document.getElementById('file').files[0];
+ let fd=new FormData();
+ fd.append('file',f);
+
+ let r=await fetch('http://127.0.0.1:8000/upload',{method:'POST',body:fd});
+ let d=await r.json();
+
+ current=d;
+
+ document.getElementById('texto').value=d.texto;
+ document.getElementById('evento').value=d.evento;
+ document.getElementById('centro').value=d.centro;
+}
+
+async function salvar(){
+ await fetch('http://127.0.0.1:8000/aprender',{
+  method:'POST',
+  headers:{'Content-Type':'application/json'},
+  body: JSON.stringify({
+    descricao: document.getElementById('texto').value,
+    evento: document.getElementById('evento').value,
+    centro: document.getElementById('centro').value
+  })
+ });
+
+ alert("IA aprendeu!");
+}
+</script>
+
+</body>
+</html>
